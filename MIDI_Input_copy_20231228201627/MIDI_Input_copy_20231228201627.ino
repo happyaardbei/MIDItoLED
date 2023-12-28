@@ -6,18 +6,23 @@
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 void setup() {
+  Serial.begin(115200);
   pinMode (LED, OUTPUT); // Set Arduino board pin 13 to output
   MIDI.begin(MIDI_CHANNEL_OMNI); // Initialize the Midi Library.
   // OMNI sets it to listen to all channels.. MIDI.begin(2) would set it 
   // to respond to notes on channel 2 only.
-  MIDI.setHandleNoteOn(flicker); // This is important!! This command
+  MIDI.setHandleNoteOn(MyHandleNoteOn); // This is important!! This command
   // tells the Midi Library which function you want to call when a NOTE ON command
   // is received. In this case it's "MyHandleNoteOn".
-  // MIDI.setHandleNoteOff(MyHandleNoteOff); // This command tells the Midi Library 
+  MIDI.setHandleNoteOff(MyHandleNoteOff); // This command tells the Midi Library 
   // to call "MyHandleNoteOff" when a NOTE OFF command is received.
+  MIDI.setHandleControlChange(flicker);
 }
 
 void loop() { // Main loop
+  //Serial.println("moi kerel");
+  //Serial.print("\n");
+  //delay(1000);
   MIDI.read(); // Continuously check if Midi data has been received.
 }
 
@@ -34,6 +39,7 @@ void MyHandleNoteOn(byte channel, byte pitch, byte velocity) {
 // It will be passed bytes for Channel, Pitch, and Velocity
 void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
   digitalWrite(LED,LOW);  //Turn LED off
+  
 }
 
 void flicker() {
