@@ -17,6 +17,7 @@ void setup() {
   MIDI.setHandleNoteOff(MyHandleNoteOff); // This command tells the Midi Library 
   // to call "MyHandleNoteOff" when a NOTE OFF command is received.
   MIDI.setHandleControlChange(flicker);
+  //MIDI.setHandlePitchBend(flicker);
 }
 
 void loop() { // Main loop
@@ -29,15 +30,18 @@ void loop() { // Main loop
 // MyHandleNoteON is the function that will be called by the Midi Library
 // when a MIDI NOTE ON message is received.
 // It will be passed bytes for Channel, Pitch, and Velocity
-void MyHandleNoteOn(byte channel, byte pitch, byte velocity) { 
-  digitalWrite(LED,true);  //Turn LED 
+void MyHandleNoteOn(byte channel, byte note, byte pitch, byte velocity) { 
+  
+    digitalWrite(LED,true);  //Turn LED 
+  
+  
 }
 
 // MyHandleNoteOFF is the function that will be called by the Midi Library
 // when a MIDI NOTE OFF message is received.
 // * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
 // It will be passed bytes for Channel, Pitch, and Velocity
-void MyHandleNoteOff(byte channel, byte pitch, byte velocity) { 
+void MyHandleNoteOff(byte channel, byte note, byte pitch, byte velocity) { 
   digitalWrite(LED,LOW);  //Turn LED off
   
 }
