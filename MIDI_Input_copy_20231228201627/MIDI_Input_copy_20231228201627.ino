@@ -1,10 +1,12 @@
 #include <MIDI.h>  // Add Midi Library
 
 #define LED 7    // Arduino Board LED is on Pin 13
+bool status = false;
+int notesCount = 0;
+
 
 //Create an instance of the library with default name, serial port and settings
 MIDI_CREATE_DEFAULT_INSTANCE();
-  bool status = false;
 
 
 void setup() {
@@ -22,12 +24,13 @@ void setup() {
   //MIDI.setHandlePitchBend(flicker);
 }
 
+
 void loop() { // Main loop
   // Serial.println("moi kerel");
   // Serial.print("\n");
   // delay(1000);
-  if(status == true ) {
-    flicker(1);
+  if(status == true) {
+    flicker(1, 40);
   }
   MIDI.read(); // Continuously check if Midi data has been received.
 }
@@ -35,19 +38,9 @@ void loop() { // Main loop
 // MyHandleNoteON is the function that will be called by the Midi Library
 // when a MIDI NOTE ON message is received.
 // It will be passed bytes for Channel, Pitch, and Velocity
-void MyHandleNoteOn(byte channel, byte number, byte pitch, byte velocity) { 
+void MyHandleNoteOn(byte channel, byte note, byte pitch, byte velocity) { 
+  notesCount = notesCount + 1;
   digitalWrite(LED, true);  
-}
-
-void ControlChange(byte channel, byte number, byte pitch, byte velocity)  {
-
-  if(number == 1 && status == false) {
-    digitalWrite(LED, true);
-    status = true;
-  } else {
-    digitalWrite(LED, false);
-    status = false;
-  }
 }
 
 // MyHandleNoteOFF is the function that will be called by the Midi Library
@@ -55,17 +48,29 @@ void ControlChange(byte channel, byte number, byte pitch, byte velocity)  {
 // * A NOTE ON message with Velocity = 0 will be treated as a NOTE OFF message *
 // It will be passed bytes for Channel, Pitch, and Velocity
 void MyHandleNoteOff(byte channel, byte note, byte pitch, byte velocity) { 
-  digitalWrite(LED,LOW);  //Turn LED off
-  
+  notesCount = notesCount - 1;
+  if (notesCount == 0) {
+    digitalWrite(LED,LOW);  //Turn LED off
+  }
+
 }
 
-void flicker(byte count) {
+void ControlChange(byte channel, byte number, byte pitch, byte velocity)  {
+  if(number == 1 && status == false) {
+    status = true;
+  } else {
+    status = false;
+  }
+}
+
+
+
+void flicker(byte count, byte d) {
   for(int i = 0; i < count; i++) {
     digitalWrite(LED,true);
-    delay(40);
+    delay(d);
     digitalWrite(LED,false);
-    delay(40);
-
+    delay(d);
   }
 
 }
